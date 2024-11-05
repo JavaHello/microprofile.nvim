@@ -35,15 +35,8 @@ M.get_client = function(name)
   return nil
 end
 
-M.get_qute_ls_client = function()
-  return M.get_client("qute_ls")
-end
-M.qute_execute_command = function(command, param, callback)
-  local err, resp = M.execute_command(M.get_qute_ls_client(), command, param, callback)
-  if err then
-    print("Error executeCommand: " .. command .. "\n" .. vim.inspect(err))
-  end
-  return resp
+M.get_microprofile_ls_client = function()
+  return M.get_client("microprofile_ls")
 end
 
 M.execute_command = function(client, command, param, callback)

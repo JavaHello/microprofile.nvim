@@ -1,9 +1,7 @@
 local M = {}
 local config = require("microprofile.config")
 local vscode = require("microprofile.vscode")
-local bind = require("microprofile.bind")
 local util = require("microprofile.util")
-local jdtls = require("microprofile.jdtls")
 
 local root_dir = function()
   return vim.loop.cwd()
@@ -62,7 +60,7 @@ local ls_config = {
   end,
 }
 
----@param opts vim.lsp.ClientConfig
+---@param opts table<string, any>
 M.setup = function(opts)
   ls_config = vim.tbl_deep_extend("keep", ls_config, opts)
   local capabilities = ls_config.capabilities or vim.lsp.protocol.make_client_capabilities()
@@ -84,30 +82,11 @@ M.setup = function(opts)
   if not ls_config.root_dir then
     ls_config.root_dir = root_dir()
   end
-  ls_config.cmd = (ls_config.cmd and #ls_config.cmd > 0) and ls_config.cmd or microprofile_ls_cmd(config.java_cmd)
+  ls_config.cmd = (ls_config.cmd and #ls_config.cmd > 0) and ls_config.cmd or microprofile_ls_cmd(config.java_bin)
   if not ls_config.cmd then
     return
   end
   ls_config.init_options.workspaceFolders = ls_config.root_dir
-  local on_init = ls_config.on_init
-  ls_config.on_init = function(client, ctx)
-    jdtls.init_config()
-    bind.bind_qute_all_request(client)
-    if on_init then
-      on_init(client, ctx)
-    end
-  end
-  local on_attach = ls_config.on_attach
-  ls_config.on_attach = function(client, bufnr)
-    local filetype = vim.bo[bufnr].filetype
-    -- hover 不支持
-    if filetype == "java" then
-      client.capabilities.hoverProvider = false
-    end
-    if on_attach then
-      on_attach(client, bufnr)
-    end
-  end
 
   local group = vim.api.nvim_create_augroup("microprofile_ls", { clear = true })
   vim.api.nvim_create_autocmd({ "FileType" }, {
