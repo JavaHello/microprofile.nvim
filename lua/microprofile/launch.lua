@@ -48,7 +48,6 @@ M.lsp_config = function(opts)
     filetypes = { "java", "yaml", "jproperties" },
     init_options = {},
     settings = {
-      microprofile_ls = {},
     },
     handlers = {},
     commands = {},

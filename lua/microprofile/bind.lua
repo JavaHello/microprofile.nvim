@@ -51,7 +51,10 @@ M.bind_microprofile_all_request = function(client)
   bind_microprofile_request(client, "microprofile/java/fileInfo")
   bind_microprofile_request(client, "microprofile/java/projectLabels")
   bind_microprofile_request(client, "microprofile/java/workspaceLabels")
-  bind_microprofile_request(client, "microprofile/propertiesChanged")
+
+  vim.lsp.commands["microprofile/propertiesChanged"] = function(event)
+    return client.notify("microprofile/propertiesChanged", event)
+  end
 end
 
 return M
