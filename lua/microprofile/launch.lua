@@ -40,28 +40,27 @@ local function microprofile_ls_cmd(java_cmd)
   return cmd
 end
 
-local ls_config = {
-  name = "microprofile_ls",
-  filetypes = { "java", "yaml", "jproperties" },
-  init_options = {},
-  settings = {
-    microprofile_ls = {},
-  },
-  handlers = {},
-  commands = {},
-  get_language_id = function(bufnr, filetype)
-    if filetype == "jproperties" then
-      local filename = vim.api.nvim_buf_get_name(bufnr)
-      if util.is_microprofile_properties_file(filename) then
-        return "microprofile-properties"
+M.lsp_config = function(opts)
+  local ls_config = {
+    name = "microprofile_ls",
+    filetypes = { "java", "yaml", "jproperties" },
+    init_options = {},
+    settings = {
+      microprofile_ls = {},
+    },
+    handlers = {},
+    commands = {},
+    get_language_id = function(bufnr, filetype)
+      if filetype == "jproperties" then
+        local filename = vim.api.nvim_buf_get_name(bufnr)
+        if util.is_microprofile_properties_file(filename) then
+          return "microprofile-properties"
+        end
       end
-    end
-    return filetype
-  end,
-}
+      return filetype
+    end,
+  }
 
----@param opts table<string, any>
-M.setup = function(opts)
   ls_config = vim.tbl_deep_extend("keep", ls_config, opts)
   local capabilities = ls_config.capabilities or vim.lsp.protocol.make_client_capabilities()
   capabilities = vim.tbl_deep_extend("keep", capabilities, {
@@ -87,7 +86,12 @@ M.setup = function(opts)
     return
   end
   ls_config.init_options.workspaceFolders = ls_config.root_dir
+  return ls_config
+end
 
+---@param opts table<string, any>
+M.setup = function(opts)
+  local ls_config = M.lsp_config(opts)
   local group = vim.api.nvim_create_augroup("microprofile_ls", { clear = true })
   vim.api.nvim_create_autocmd({ "FileType" }, {
     group = group,
