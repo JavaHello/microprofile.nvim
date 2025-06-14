@@ -1,5 +1,4 @@
 local M = {}
-local config = require("microprofile.config")
 local vscode = require("microprofile.vscode")
 local util = require("microprofile.util")
 
@@ -8,6 +7,7 @@ local root_dir = function()
 end
 
 local microprofilels_path = function()
+  local config = require("microprofile.config")
   if config.ls_path then
     return config.ls_path
   end
@@ -18,6 +18,7 @@ local microprofilels_path = function()
 end
 
 local function microprofile_ls_cmd(java_cmd)
+  local config = require("microprofile.config")
   local microprofile_ls_path = microprofilels_path()
   if not microprofile_ls_path then
     vim.notify("Microprofile LS is not installed", vim.log.levels.WARN)
@@ -41,6 +42,7 @@ local function microprofile_ls_cmd(java_cmd)
 end
 
 M.lsp_config = function(opts)
+  local config = require("microprofile.config")
   local ls_config = {
     name = "microprofile_ls",
     filetypes = { "java", "yaml", "jproperties" },
